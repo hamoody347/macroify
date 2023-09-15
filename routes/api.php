@@ -26,10 +26,10 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 // Route::middleware(['auth:sanctum'])->group(function () {
 // User Routes
 Route::get('/users', [UserController::class, 'index'])->name('index.users'); // Get all users
+Route::get('/users/data', [UserController::class, 'data'])->name('data.users'); // Get population data for view
 Route::get('/users/{id}', [UserController::class, 'show'])->name('show.users'); // Get a single user
 Route::post('/users', [UserController::class, 'store'])->name('store.users'); // Create a new user
 Route::put('/users/{id}', [UserController::class, 'update'])->name('update.users'); // Update an existing user
-Route::get('/users/data', [UserController::class, 'data'])->name('data.users'); // Get population data for view
 
 // Category Routes
 Route::get('/categories', [CategoryController::class, 'index'])->name('index.categories'); // Get all categories
@@ -47,15 +47,15 @@ Route::put('/departments/{id}', [DepartmentController::class, 'update'])->name('
 
 // JobFunction Routes
 Route::get('/job-functions', [JobFunctionController::class, 'index'])->name('index.jobfunctions'); // Get all job functions
+Route::get('/job-functions/data', [JobFunctionController::class, 'data'])->name('data.jobfunctions'); // Get population data for view
 Route::get('/job-functions/{id}', [JobFunctionController::class, 'show'])->name('show.jobfunctions'); // Get a single job function
 Route::post('/job-functions', [JobFunctionController::class, 'store'])->name('store.jobfunctions'); // Create a new job function
 Route::put('/job-functions/{id}', [JobFunctionController::class, 'update'])->name('update.jobfunctions'); // Update an existing job function
-Route::get('/job-functions/data', [JobFunctionController::class, 'data'])->name('data.jobfunctions'); // Get population data for view
 
 // SOP Routes
 Route::get('/sops', [SOPController::class, 'index'])->name('index.sops'); // Get all sops
+Route::get('/sops/data', [SOPController::class, 'data'])->name('data.sops'); // Get population data for view
 Route::get('/sops/{id}', [SOPController::class, 'show'])->name('show.sops'); // Get a single sop
 Route::post('/sops', [SOPController::class, 'store'])->name('store.sops'); // Create a new SOP
 Route::put('/sops/{id}', [SOPController::class, 'update'])->name('update.sops'); // Update an existing SOP
-Route::get('/sops/data', [SOPController::class, 'data'])->name('data.sops'); // Get population data for view
 // });

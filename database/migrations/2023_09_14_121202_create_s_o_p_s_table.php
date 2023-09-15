@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreign('department_id')->references('id')->on('departments');
             $table->text('content');
             $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('edited_by');
+            $table->unsignedBigInteger('edited_by')->nullable()->default(null);
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

@@ -14,12 +14,16 @@ class SOPController extends Controller
     {
         $user = $request->user();
 
-        $userJobFunctions = $user->jobFunctions()->pluck('id');
+        $userJobFunctions = $user->jobFunctions()->pluck('job_functions.id');
+
+        // $userJobFunctions = [1, 2];
 
         // Retrieve SOPs that match the user's job functions
-        $sops = SOP::with(['category', 'department', 'createdBy', 'editedBy', 'jobFunctions'])->whereHas('jobFunctions', function ($query) use ($userJobFunctions) {
-            $query->whereIn('job_functions.id', $userJobFunctions);
-        })->get();
+        $sops = SOP::with(['category', 'department', 'createdBy', 'editedBy', 'jobFunctions'])
+            ->whereHas('jobFunctions', function ($query) use ($userJobFunctions) {
+                $query->whereIn('job_functions.id', $userJobFunctions);
+            })
+            ->get();
 
         return response()->json($sops);
     }
@@ -42,14 +46,16 @@ class SOPController extends Controller
             'content' => 'required|string',
             'department_id' => 'required|exists:departments,id',
             'category_id' => 'required|exists:categories,id',
-            'created_by' => 'required|exists:users,id',
-            'edit_by' => 'exists:users,id',
+            // 'created_by' => 'exists:users,id',
+            // 'edited_by' => 'exists:users,id',
             'status' => 'boolean',
         ]);
 
+        $data['created_by'] = $request->user()->id;
+
         $sop = SOP::create($data);
 
-        $sop->jobFunctions()->sync($request->jobFunctions);
+        $sop->jobFunctions()->sync($request->job_functions);
 
         $sop->save();
 
@@ -65,14 +71,16 @@ class SOPController extends Controller
             'content' => 'required|string',
             'department_id' => 'required|exists:departments,id',
             'category_id' => 'required|exists:categories,id',
-            'created_by' => 'required|exists:users,id',
-            'edit_by' => 'required|exists:users,id',
+            // 'created_by' => 'required|exists:users,id',
+            // 'edited_by' => 'required|exists:users,id',
             'status' => 'boolean',
         ]);
 
+        $data['edited_by'] = $request->user()->id;
+
         $sop->update($data);
 
-        $sop->jobFunctions()->sync($request->jobFunctions);
+        $sop->jobFunctions()->sync($request->job_functions);
 
         $sop->save();
 
@@ -83,15 +91,15 @@ class SOPController extends Controller
     {
         $departments = Department::where('status', b'1')->get();
 
-        $jobFunctions = JobFunction::where('status', b'1')->get();
+        $job_functions = JobFunction::where('status', b'1')->get();
 
         $categories = Category::where('status', b'1')->get();
 
-        return response()->json(['data' => [
+        return response()->json([
             'departments' => $departments,
-            'jobFunctions' => $jobFunctions,
+            'job_functions' => $job_functions,
             'categories' => $categories,
             'user' => $request->user()
-        ]], 200);
+        ], 200);
     }
 }
