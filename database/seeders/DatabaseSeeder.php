@@ -29,7 +29,16 @@ class DatabaseSeeder extends Seeder
             'role' => 'super-admin',
         ]);
 
-        $tenant1 = \App\Models\Tenant::create();
+        $tenant1 = \App\Models\Tenant::create(["email" => "hamoody347@gmail.com", "name" => "Ahmed Abdelsalam"]);
         $tenant1->domains()->create(['domain' => 'ahmed.backend.macroify.com']);
+
+        $tenant1->run(function () {
+            \App\Models\User::create([
+                "email" => "hamoody347@gmail.com",
+                "role" => "admin",
+                "password" => Hash::make('789510'),
+                "department" => null
+            ]);
+        });
     }
 }
