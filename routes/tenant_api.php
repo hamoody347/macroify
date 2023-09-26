@@ -74,6 +74,6 @@ Route::middleware([
         Route::get('/sops/{id}', [SOPController::class, 'show'])->name('show.sops'); // Get a single sop
         Route::post('/sops', [SOPController::class, 'store'])->name('store.sops'); // Create a new SOP
         Route::put('/sops/{id}', [SOPController::class, 'update'])->name('update.sops'); // Update an existing SOP
-        Route::delete('/sops/{id}', [SOPController::class, 'update'])->name('delete.sops'); // Update an existing SOP
+        Route::delete('/sops/{id}', [SOPController::class, 'delete'])->name('delete.sops'); // Update an existing SOP
     });
 });
