@@ -66,6 +66,8 @@ class SOPController extends Controller
     {
         $sop = SOP::findOrFail($request->id);
 
+        // dd($request->job_functions);
+
         $data = $request->validate([
             'name' => 'required|string',
             'content' => 'required|string',
@@ -84,7 +86,7 @@ class SOPController extends Controller
 
         $sop->save();
 
-        return response()->json(['message' => 'User updated successfully!'], 200);
+        return response()->json(['message' => 'Updated successfully!'], 200);
     }
 
     function data(Request $request)
@@ -101,5 +103,14 @@ class SOPController extends Controller
             'categories' => $categories,
             'user' => $request->user()
         ], 200);
+    }
+
+    function delete($id)
+    {
+        $sop = SOP::findOrFail($id);
+
+        $sop->delete();
+
+        return response()->json(['message' => 'Deleted successfully!'], 200);
     }
 }

@@ -57,4 +57,13 @@ class DepartmentController extends Controller
             return response()->json(['error' => $e, 'message' => 'Not Found'], 404);
         }
     }
+
+    function delete($id)
+    {
+        $sop = Department::findOrFail($id);
+
+        $sop->delete();
+
+        return response()->json(['message' => 'Deleted successfully!'], 200);
+    }
 }

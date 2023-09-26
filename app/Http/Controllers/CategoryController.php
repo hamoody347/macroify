@@ -59,4 +59,13 @@ class CategoryController extends Controller
             return response()->json(['error' => $e, 'message' => 'User Not Found'], 404);
         }
     }
+
+    function delete($id)
+    {
+        $sop = Category::findOrFail($id);
+
+        $sop->delete();
+
+        return response()->json(['message' => 'Deleted successfully!'], 200);
+    }
 }

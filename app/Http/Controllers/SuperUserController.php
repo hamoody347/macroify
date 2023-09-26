@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
-use App\Models\JobFunction;
-use App\Models\User;
+use App\Models\SuperUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class SuperUserController extends Controller
 {
     function index()
     {
-        $users = User::with(['department'])->where('status', b'1')->get();
+        $users = SuperUser::where('status', b'1')->get();
 
         return response()->json($users);
     }
@@ -20,7 +19,7 @@ class UserController extends Controller
     {
         try {
             // Get user with it's department and job functions.
-            $user = User::with(['department', 'jobFunctions'])->findOrFail($id);
+            $user = SuperUser::findOrFail($id);
 
             return response()->json($user);
         } catch (\Exception $e) {
@@ -39,11 +38,9 @@ class UserController extends Controller
             'status' => 'boolean',
         ]);
 
-        $data['password'] = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'; // password
+        $data['password'] = Hash::make($request->password);
 
-        $user = User::create($data);
-
-        $user->jobFunctions()->sync($request->job_functions);
+        $user = SuperUser::create($data);
 
         $user->save();
 
@@ -52,41 +49,20 @@ class UserController extends Controller
 
     function update(Request $request)
     {
-        $user = User::findOrFail($request->id);
+        $user = SuperUser::findOrFail($request->id);
 
         $data = $request->validate([
             'name' => 'string',
             'email' => 'email|unique:users,email,' . $user->id,
             'password' => 'min:8',
-            'role' => 'in:admin,user',
-            'department_id' => 'exists:departments,id',
+            'role' => 'in:super-admin',
             'status' => 'boolean',
         ]);
 
         $user->update($data);
 
-        $user->jobFunctions()->sync($request->jobFunctions);
-
         $user->save();
 
         return response()->json(['message' => 'User updated successfully!'], 200);
-    }
-
-    function data()
-    {
-        $departments = Department::where('status', b'1')->get();
-
-        $jobFunctions = JobFunction::where('status', b'1')->get();
-
-        return response()->json(['departments' => $departments, 'job_functions' => $jobFunctions], 200);
-    }
-
-    function delete($id)
-    {
-        $sop = User::findOrFail($id);
-
-        $sop->delete();
-
-        return response()->json(['message' => 'Deleted successfully!'], 200);
     }
 }

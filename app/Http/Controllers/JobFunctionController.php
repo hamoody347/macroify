@@ -58,6 +58,15 @@ class JobFunctionController extends Controller
     {
         $departments = Department::where('status', b'1')->get();
 
-        return response()->json(['data' => ['departments' => $departments]], 200);
+        return response()->json(['departments' => $departments], 200);
+    }
+
+    function delete($id)
+    {
+        $sop = JobFunction::findOrFail($id);
+
+        $sop->delete();
+
+        return response()->json(['message' => 'Deleted successfully!'], 200);
     }
 }
