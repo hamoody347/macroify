@@ -15,10 +15,10 @@ class TenantController extends Controller
     function index()
     {
         try {
-            $tenants = Tenant::all();
+            $tenants = Tenant::with(['domains'])->get();
             return response()->json($tenants);
         } catch (\Exception $e) {
-            return response()->json($e);
+            return response()->json(['error' => $e, 'message' => 'Something Went Wrong'], 500);
         }
     }
 
@@ -26,7 +26,7 @@ class TenantController extends Controller
     {
         try {
             // Get tenant with it's domain.
-            $tenant = Tenant::with(['domain'])->findOrFail($id);
+            $tenant = Tenant::with(['domains'])->findOrFail($id);
 
             return response()->json($tenant);
         } catch (\Exception $e) {
@@ -71,7 +71,7 @@ class TenantController extends Controller
 
     function update(Request $request)
     {
-        $tenant = Tenant::findOrFail($request->id);
+        $tenant = Tenant::with(['domains'])->findOrFail($request->id);
 
         $data = $request->validate([
             'name' => 'string',
