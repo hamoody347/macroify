@@ -33,8 +33,7 @@ class SuperUserController extends Controller
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'min:8',
-            'role' => 'required|in:admin,user,super-admin',
-            'department_id' => 'required|exists:departments,id',
+            'role' => 'required|in:super-admin',
             'status' => 'boolean',
         ]);
 
@@ -49,20 +48,22 @@ class SuperUserController extends Controller
 
     function update(Request $request)
     {
-        $user = SuperUser::findOrFail($request->id);
+        try {
 
-        $data = $request->validate([
-            'name' => 'string',
-            'email' => 'email|unique:users,email,' . $user->id,
-            'password' => 'min:8',
-            'role' => 'in:super-admin',
-            'status' => 'boolean',
-        ]);
+            $user = SuperUser::findOrFail($request->id);
 
-        $user->update($data);
+            $data = $request->validate([
+                'name' => 'string',
+                'email' => 'email|unique:users,email,' . $user->id,
+            ]);
 
-        $user->save();
+            $user->update($data);
 
-        return response()->json(['message' => 'User updated successfully!'], 200);
+            $user->save();
+
+            return response()->json(['message' => 'User updated successfully!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e, 'message' => 'Something went wrong'], 500);
+        }
     }
 }

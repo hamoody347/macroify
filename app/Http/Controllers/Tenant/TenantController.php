@@ -73,13 +73,15 @@ class TenantController extends Controller
     {
         $tenant = Tenant::with(['domains'])->findOrFail($request->id);
 
-        $data = $request->validate([
+        $request->validate([
             'name' => 'string',
             // 'email' => 'email|unique:tenants,email,' . $tenant->id,
             // 'email' => 'email',
         ]);
 
-        $tenant->update($data);
+        $tenant->name = $request->name;
+
+        $tenant->save();
 
         $tenant->domains()->first()->update(['domain' => $request->domain]);
 

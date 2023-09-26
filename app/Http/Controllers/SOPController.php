@@ -14,16 +14,22 @@ class SOPController extends Controller
     {
         $user = $request->user();
 
-        $userJobFunctions = $user->jobFunctions()->pluck('job_functions.id');
+        if ($user->role == 'user') {
 
-        // $userJobFunctions = [1, 2];
+            $userJobFunctions = $user->jobFunctions()->pluck('job_functions.id');
 
-        // Retrieve SOPs that match the user's job functions
-        $sops = SOP::with(['category', 'department', 'createdBy', 'editedBy', 'jobFunctions'])
-            ->whereHas('jobFunctions', function ($query) use ($userJobFunctions) {
-                $query->whereIn('job_functions.id', $userJobFunctions);
-            })
-            ->get();
+            // Retrieve SOPs that match the user's job functions
+            $sops = SOP::with(['category', 'department', 'createdBy', 'editedBy', 'jobFunctions'])
+                ->whereHas('jobFunctions', function ($query) use ($userJobFunctions) {
+                    $query->whereIn('job_functions.id', $userJobFunctions);
+                })
+                ->get();
+        }
+
+        if ($user->role == 'admin') {
+
+            $sops = SOP::with(['category', 'department', 'createdBy', 'editedBy', 'jobFunctions'])->get();
+        }
 
         return response()->json($sops);
     }
@@ -82,7 +88,7 @@ class SOPController extends Controller
 
         $sop->update($data);
 
-        $sop->jobFunctions()->sync($request->job_functions);
+        $sop->jobFunctions()->sync($request->jobFunctions);
 
         $sop->save();
 
