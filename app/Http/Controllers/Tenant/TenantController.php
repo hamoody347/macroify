@@ -75,7 +75,7 @@ class TenantController extends Controller
 
         $data = $request->validate([
             'name' => 'string',
-            'email' => 'email|unique:tenants,email,' . $tenant->id,
+            // 'email' => 'email|unique:tenants,email,' . $tenant->id,
             // 'email' => 'email',
         ]);
 
