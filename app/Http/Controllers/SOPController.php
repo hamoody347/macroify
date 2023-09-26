@@ -113,10 +113,14 @@ class SOPController extends Controller
 
     function delete($id)
     {
-        $sop = SOP::findOrFail($id);
+        try {
+            $sop = SOP::findOrFail($id);
 
-        $sop->delete();
+            $sop->delete();
 
-        return response()->json(['message' => 'Deleted successfully!'], 200);
+            return response()->json(['message' => 'Deleted successfully!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e, 'message' => 'Something Went Wrong'], 500);
+        }
     }
 }
