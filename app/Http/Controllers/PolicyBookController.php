@@ -90,7 +90,7 @@ class PolicyBookController extends Controller
             return response()->json(['message' => 'Policy book created successfully']);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation failed, handle the exception
-            return response()->json(['errors' => $e->validator->errors()], 422);
+            return response()->json(['errors' => $e->validator->errors(), 'validator' => true], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed', 'error' => $e->getMessage(), 'data' => $request->effective_from_date], 500);
         }
@@ -160,7 +160,7 @@ class PolicyBookController extends Controller
             return response()->json(['message' => 'Policy book updated successfully']);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation failed, handle the exception
-            return response()->json(['errors' => $e->validator->errors()], 422);
+            return response()->json(['errors' => $e->validator->errors(), 'validator' => true], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed', 'error' => $e->getMessage(), 'data' => $request->id], 500);
         }

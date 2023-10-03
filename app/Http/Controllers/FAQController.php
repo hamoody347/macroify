@@ -62,7 +62,7 @@ class FAQController extends Controller
             return response()->json(['message' => 'FAQ created successfully!'], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation failed, handle the exception
-            return response()->json(['errors' => $e->validator->errors()], 422);
+            return response()->json(['errors' => $e->validator->errors(), 'validator' => true], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
@@ -107,13 +107,13 @@ class FAQController extends Controller
             return response()->json(['message' => 'FAQ updated successfully!'], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation failed, handle the exception
-            return response()->json(['errors' => $e->validator->errors()], 422);
+            return response()->json(['errors' => $e->validator->errors(), 'validator' => true], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
     }
 
-    public function destroy($id)
+    public function delete($id)
     {
         try {
             // Find the wiki

@@ -52,7 +52,7 @@ class WikiController extends Controller
             ]);
 
             // Set creating user
-            $validatedData['edited_by'] = $request->user()->id;
+            $validatedData['created_by'] = $request->user()->id;
 
             // Create a new wiki
             $wiki = Wiki::create($validatedData);
@@ -64,7 +64,7 @@ class WikiController extends Controller
             return response()->json(['message' => 'Wiki created successfully!'], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation failed, handle the exception
-            return response()->json(['errors' => $e->validator->errors()], 422);
+            return response()->json(['errors' => $e->validator->errors(), 'validator' => true], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
@@ -73,7 +73,7 @@ class WikiController extends Controller
     function show($id)
     {
         try {
-            $wiki = Wiki::with(['category', 'department', 'createdBy', 'editedBy', 'jobFunctions'])->findOrFail($id);
+            $wiki = Wiki::with(['category', 'department', 'editedBy', 'jobFunctions'])->findOrFail($id);
 
             return response()->json($wiki);
         } catch (\Exception $e) {
@@ -92,7 +92,6 @@ class WikiController extends Controller
                 'department_id' => 'required|exists:departments,id',
                 'content' => 'required|string',
                 'created_by' => 'required|exists:users,id',
-                'edited_by' => 'exists:users,id',
                 'status' => 'required|in:published,draft,unpublished',
                 'general' => 'boolean',
             ]);
@@ -100,7 +99,7 @@ class WikiController extends Controller
             // return response()->json($validatedData);
 
             // Set editing user
-            $validatedData['created_by'] = $request->user()->id;
+            $validatedData['edited_by'] = $request->user()->id;
 
             // Update the wiki with the validated data
             $wiki->update($validatedData);
@@ -112,7 +111,7 @@ class WikiController extends Controller
             return response()->json(['message' => 'Wiki updated successfully!'], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation failed, handle the exception
-            return response()->json(['errors' => $e->validator->errors()], 422);
+            return response()->json(['errors' => $e->validator->errors(), 'validator' => true], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }

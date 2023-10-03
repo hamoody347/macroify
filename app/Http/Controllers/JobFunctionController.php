@@ -41,7 +41,7 @@ class JobFunctionController extends Controller
             return response()->json(['message' => 'Created Successfully!'], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation failed, handle the exception
-            return response()->json(['errors' => $e->validator->errors()], 422);
+            return response()->json(['errors' => $e->validator->errors(), 'validator' => true], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
@@ -64,7 +64,7 @@ class JobFunctionController extends Controller
             return response()->json(['message' => 'Updated successfully!'], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation failed, handle the exception
-            return response()->json(['errors' => $e->validator->errors()], 422);
+            return response()->json(['errors' => $e->validator->errors(), 'validator' => true], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
