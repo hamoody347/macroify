@@ -25,9 +25,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/users', [SuperUserController::class, 'index']); // Get all users
 Route::middleware(['auth:sanctum'])->group(function () {
     // User Routes
-    Route::get('/users', [SuperUserController::class, 'index']); // Get all users
     Route::get('/users/{id}', [SuperUserController::class, 'show']); // Get a single user
     Route::post('/users', [SuperUserController::class, 'store']); // Create a new user
     Route::put('/users/{id}', [SuperUserController::class, 'update']); // Update an existing user
