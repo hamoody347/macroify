@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Tenant;
 use App\Models\User;
+use Stancl\Tenancy\Database\Models\Domain;
 
 class TenantController extends Controller
 {
@@ -107,6 +108,17 @@ class TenantController extends Controller
             $tenant->delete();
 
             return response()->json(['message' => 'Tenant deleted successfully!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
+    }
+
+    function domains()
+    {
+        try {
+            $domains = Domain::all();
+
+            return response()->json($domains);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
