@@ -40,4 +40,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/tenants', [TenantController::class, 'store']); // Create a new user
     Route::put('/tenants/{id}', [TenantController::class, 'update']); // Update an existing user
     Route::delete('/tenants/{id}', [TenantController::class, 'delete']); // Update an existing user
+
+    // Domains Routes
+    Route::get('/domains', [TenantController::class, 'domains']);
 });
