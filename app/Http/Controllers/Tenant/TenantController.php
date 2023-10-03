@@ -64,27 +64,38 @@ class TenantController extends Controller
             $tenant->save();
 
             return response()->json(['message' => 'Tenant Created Successfully!'], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e, 'message' => 'Addition Failed'], 500);
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
     }
 
     function update(Request $request)
     {
-        $tenant = Tenant::with(['domains'])->findOrFail($request->id);
+        try {
 
-        $request->validate([
-            'name' => 'string',
-            // 'email' => 'email|unique:tenants,email,' . $tenant->id,
-            // 'email' => 'email',
-        ]);
+            $tenant = Tenant::with(['domains'])->findOrFail($request->id);
 
-        $tenant->name = $request->name;
+            $request->validate([
+                'name' => 'string',
+                // 'email' => 'email|unique:tenants,email,' . $tenant->id,
+                // 'email' => 'email',
+            ]);
 
-        $tenant->save();
+            $tenant->name = $request->name;
 
-        $tenant->domains()->first()->update(['domain' => $request->domain]);
+            $tenant->save();
 
-        return response()->json(['message' => 'Tenant updated successfully!'], 200);
+            $tenant->domains()->first()->update(['domain' => $request->domain]);
+
+            return response()->json(['message' => 'Tenant updated successfully!'], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
     }
 }

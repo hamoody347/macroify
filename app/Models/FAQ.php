@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SOP extends Model
+class FAQ extends Model
 {
     use HasFactory;
 
+
     protected $fillable = [
-        'name',
+        'question',
         'category_id',
         'department_id',
-        'content',
+        'answer',
         'created_by',
         'edited_by',
         'status',

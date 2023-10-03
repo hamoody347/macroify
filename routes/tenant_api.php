@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 
+use App\Http\Controllers\FAQController;
+use App\Http\Controllers\SOPController;
+use App\Http\Controllers\WikiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\PolicyBookController;
 use App\Http\Controllers\JobFunctionController;
-use App\Http\Controllers\SOPController;
 
 use App\Http\Controllers\Auth\LoginController;
 /*
@@ -32,6 +35,10 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
     // Auth Routes
+    Route::get('/fallbacklogin', function () {
+        return response()->json(["message" => "Not Authenticated!"]);
+    })->name('login');
+
     Route::post('/login', [LoginController::class, 'login'])->name('users.login');
     Route::middleware(['auth:sanctum'])->get('/logout', [LoginController::class, 'logout'])->name('users.logout');
 
@@ -52,14 +59,12 @@ Route::middleware([
         Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('show.categories'); // Get a single category
         Route::post('/categories', [CategoryController::class, 'store'])->name('store.categories'); // Create a new category
         Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('update.categories'); // Update an existing category
-        // Route::get('/categories/data', [CategoryController::class, 'data'])->name('data.categories'); // Get population data for view
 
         // Department Routes
         Route::get('/departments', [DepartmentController::class, 'index'])->name('index.departments'); // Get all departments
         Route::get('/departments/{id}', [DepartmentController::class, 'show'])->name('show.departments'); // Get a single department
         Route::post('/departments', [DepartmentController::class, 'store'])->name('store.departments'); // Create a new department
         Route::put('/departments/{id}', [DepartmentController::class, 'update'])->name('update.departments'); // Update an existing department
-        // Route::get('/departments/data', [DepartmentController::class, 'data'])->name('data.departments'); // Get population data for view
 
         // JobFunction Routes
         Route::get('/job-functions', [JobFunctionController::class, 'index'])->name('index.jobfunctions'); // Get all job functions
@@ -69,11 +74,39 @@ Route::middleware([
         Route::put('/job-functions/{id}', [JobFunctionController::class, 'update'])->name('update.jobfunctions'); // Update an existing job function
 
         // SOP Routes
-        Route::get('/sops', [SOPController::class, 'index'])->name('index.sops'); // Get all sops
+        Route::get('/sops', [SOPController::class, 'index'])->name('index.sops'); // Get all SOPS
         Route::get('/sops/data', [SOPController::class, 'data'])->name('data.sops'); // Get population data for view
-        Route::get('/sops/{id}', [SOPController::class, 'show'])->name('show.sops'); // Get a single sop
+        Route::get('/sops/{id}', [SOPController::class, 'show'])->name('show.sops'); // Get a single SOP
         Route::post('/sops', [SOPController::class, 'store'])->name('store.sops'); // Create a new SOP
         Route::put('/sops/{id}', [SOPController::class, 'update'])->name('update.sops'); // Update an existing SOP
         Route::delete('/sops/{id}', [SOPController::class, 'delete'])->name('delete.sops'); // Update an existing SOP
+
+        // FAQ Routes
+        Route::get('/faqs', [FAQController::class, 'index'])->name('index.faqs'); // Get all FAQS
+        Route::get('/faqs/data', [FAQController::class, 'data'])->name('data.faqs'); // Get population data for view
+        Route::get('/faqs/{id}', [FAQController::class, 'show'])->name('show.faqs'); // Get a single FAQ
+        Route::post('/faqs', [FAQController::class, 'store'])->name('store.faqs'); // Create a new FAQ
+        Route::put('/faqs/{id}', [FAQController::class, 'update'])->name('update.faqs'); // Update an existing FAQ
+        Route::delete('/faqs/{id}', [FAQController::class, 'delete'])->name('delete.faqs'); // Update an existing FAQ
+
+        // Wiki Routes
+        Route::get('/wikis', [WikiController::class, 'index'])->name('index.wikis'); // Get all WikiS
+        Route::get('/wikis/data', [WikiController::class, 'data'])->name('data.wikis'); // Get population data for view
+        Route::get('/wikis/{id}', [WikiController::class, 'show'])->name('show.wikis'); // Get a single Wiki
+        Route::post('/wikis', [WikiController::class, 'store'])->name('store.wikis'); // Create a new Wiki
+        Route::put('/wikis/{id}', [WikiController::class, 'update'])->name('update.wikis'); // Update an existing Wiki
+        Route::delete('/wikis/{id}', [WikiController::class, 'delete'])->name('delete.wikis'); // Update an existing Wiki
+
+        // Policy Routes
+        Route::get('/policies', [PolicyBookController::class, 'index'])->name('index.policies'); // Get all policies
+        Route::get('/policies/data', [PolicyBookController::class, 'data'])->name('data.policies'); // Get population data for view
+        Route::get('/policies/assigned', [PolicyBookController::class, 'assigned'])->name('index.assigned.policies'); // Get population data for view
+        Route::get('/policies/assigned/{id}', [PolicyBookController::class, 'showAssigned'])->name('assigned.policies'); // Get a single assigned policy
+        Route::get('/policies/{id}', [PolicyBookController::class, 'show'])->name('show.policies'); // Get a single policy
+        Route::post('/policies', [PolicyBookController::class, 'store'])->name('store.policies'); // Create a new policy
+        Route::post('/policies/{id}/agreement', [PolicyBookController::class, 'agreement'])->name('agreement.policies'); // Mark Policy as agreed to
+        Route::put('/policies/{id}', [PolicyBookController::class, 'update'])->name('update.policies'); // Update an existing policy
+        Route::delete('/policies/{id}', [PolicyBookController::class, 'delete'])->name('delete.policies'); // Delete an existing policy
+
     });
 });

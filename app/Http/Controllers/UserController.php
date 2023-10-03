@@ -43,7 +43,8 @@ class UserController extends Controller
 
         $user = User::create($data);
 
-        $user->jobFunctions()->sync($request->job_functions);
+        $user->updatePolicyAssignments($request->jobFunctions);
+        $user->jobFunctions()->sync($request->jobFunctions);
 
         $user->save();
 
@@ -65,9 +66,11 @@ class UserController extends Controller
 
         $user->update($data);
 
+        $user->updatePolicyAssignments($request->jobFunctions);
         $user->jobFunctions()->sync($request->jobFunctions);
 
         $user->save();
+
 
         return response()->json(['message' => 'User updated successfully!'], 200);
     }

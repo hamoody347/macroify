@@ -20,8 +20,11 @@ class DepartmentController extends Controller
             $department = Department::with(['sops'])->findOrFail($id);
 
             return response()->json($department);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e, 'message' => 'Not Found'], 404);
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
     }
 
@@ -53,8 +56,11 @@ class DepartmentController extends Controller
             $user->update($data);
 
             return response()->json(['message' => 'Updated successfully!'], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e, 'message' => 'Not Found'], 404);
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
     }
 

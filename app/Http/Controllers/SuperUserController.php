@@ -29,21 +29,28 @@ class SuperUserController extends Controller
 
     function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'min:8',
-            'role' => 'required|in:super-admin',
-            'status' => 'boolean',
-        ]);
+        try {
+            $data = $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email|unique:users',
+                'password' => 'min:8',
+                'role' => 'required|in:super-admin',
+                'status' => 'boolean',
+            ]);
 
-        $data['password'] = Hash::make($request->password);
+            $data['password'] = Hash::make($request->password);
 
-        $user = SuperUser::create($data);
+            $user = SuperUser::create($data);
 
-        $user->save();
+            $user->save();
 
-        return response()->json(['message' => 'User Created Successfully!'], 201);
+            return response()->json(['message' => 'User Created Successfully!'], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
     }
 
     function update(Request $request)
@@ -62,8 +69,11 @@ class SuperUserController extends Controller
             $user->save();
 
             return response()->json(['message' => 'User updated successfully!'], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e, 'message' => 'Something went wrong'], 500);
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
     }
 }

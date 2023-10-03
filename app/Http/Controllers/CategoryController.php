@@ -27,16 +27,24 @@ class CategoryController extends Controller
 
     function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'description' => 'string',
-            'type' => 'required|in:SOP,LMS,FAQ,WIKI,Policy,OKR',
-            'status' => 'boolean',
-        ]);
+        try {
 
-        Category::create($data);
+            $data = $request->validate([
+                'name' => 'required|string',
+                'description' => 'string',
+                'type' => 'required|in:SOP,LMS,FAQ,WIKI,Policy,OKR',
+                'status' => 'boolean',
+            ]);
 
-        return response()->json(['message' => 'User Created Successfully!'], 201);
+            Category::create($data);
+
+            return response()->json(['message' => 'User Created Successfully!'], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
     }
 
     function update(Request $request)
@@ -55,8 +63,11 @@ class CategoryController extends Controller
             $category->update($data);
 
             return response()->json(['message' => 'Updated successfully!'], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e, 'message' => 'User Not Found'], 404);
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
     }
 

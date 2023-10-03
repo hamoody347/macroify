@@ -28,30 +28,46 @@ class JobFunctionController extends Controller
 
     function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'department_id' => 'required|exists:departments,id',
-            'status' => 'boolean',
-        ]);
+        try {
 
-        JobFunction::create($data);
+            $data = $request->validate([
+                'name' => 'required|string',
+                'department_id' => 'required|exists:departments,id',
+                'status' => 'boolean',
+            ]);
 
-        return response()->json(['message' => 'Created Successfully!'], 201);
+            JobFunction::create($data);
+
+            return response()->json(['message' => 'Created Successfully!'], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
     }
 
     function update(Request $request)
     {
-        $jobFunction = JobFunction::findOrFail($request->id);
+        try {
 
-        $data = $request->validate([
-            'name' => 'required|string',
-            'department_id' => 'required|exists:departments,id',
-            'status' => 'boolean',
-        ]);
+            $jobFunction = JobFunction::findOrFail($request->id);
 
-        $jobFunction->update($data);
+            $data = $request->validate([
+                'name' => 'required|string',
+                'department_id' => 'required|exists:departments,id',
+                'status' => 'boolean',
+            ]);
 
-        return response()->json(['message' => 'Updated successfully!'], 200);
+            $jobFunction->update($data);
+
+            return response()->json(['message' => 'Updated successfully!'], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
     }
 
     function data()

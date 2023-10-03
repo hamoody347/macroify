@@ -22,7 +22,7 @@ class SOPController extends Controller
             $sops = SOP::with(['category', 'department', 'createdBy', 'editedBy', 'jobFunctions'])
                 ->whereHas('jobFunctions', function ($query) use ($userJobFunctions) {
                     $query->whereIn('job_functions.id', $userJobFunctions);
-                })
+                })->orWhere('general', true)
                 ->get();
         }
 
@@ -47,52 +47,65 @@ class SOPController extends Controller
 
     function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'content' => 'required|string',
-            'department_id' => 'required|exists:departments,id',
-            'category_id' => 'required|exists:categories,id',
-            // 'created_by' => 'exists:users,id',
-            // 'edited_by' => 'exists:users,id',
-            'status' => 'boolean',
-        ]);
+        try {
+            $data = $request->validate([
+                'name' => 'required|string',
+                'content' => 'required|string',
+                'department_id' => 'required|exists:departments,id',
+                'category_id' => 'required|exists:categories,id',
+                'created_by' => 'exists:users,id',
+                'edited_by' => 'exists:users,id',
+                'status' => 'boolean',
+            ]);
 
-        $data['created_by'] = $request->user()->id;
+            $data['created_by'] = $request->user()->id;
 
-        $sop = SOP::create($data);
+            $sop = SOP::create($data);
 
-        $sop->jobFunctions()->sync($request->job_functions);
+            $sop->jobFunctions()->sync($request->jobFunctions);
 
-        $sop->save();
+            $sop->save();
 
-        return response()->json(['message' => 'Created Successfully!'], 201);
+            return response()->json(['message' => 'Created Successfully!'], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
     }
 
     function update(Request $request)
     {
-        $sop = SOP::findOrFail($request->id);
+        try {
 
-        // dd($request->job_functions);
+            $sop = SOP::findOrFail($request->id);
 
-        $data = $request->validate([
-            'name' => 'required|string',
-            'content' => 'required|string',
-            'department_id' => 'required|exists:departments,id',
-            'category_id' => 'required|exists:categories,id',
-            // 'created_by' => 'required|exists:users,id',
-            // 'edited_by' => 'required|exists:users,id',
-            'status' => 'boolean',
-        ]);
+            $data = $request->validate([
+                'name' => 'required|string',
+                'content' => 'required|string',
+                'department_id' => 'required|exists:departments,id',
+                'category_id' => 'required|exists:categories,id',
+                'created_by' => 'exists:users,id',
+                'edited_by' => 'exists:users,id',
+                'status' => 'boolean',
+            ]);
 
-        $data['edited_by'] = $request->user()->id;
+            $data['edited_by'] = $request->user()->id;
 
-        $sop->update($data);
+            $sop->update($data);
 
-        $sop->jobFunctions()->sync($request->jobFunctions);
+            $sop->jobFunctions()->sync($request->jobFunctions);
 
-        $sop->save();
+            $sop->save();
 
-        return response()->json(['message' => 'Updated successfully!'], 200);
+            return response()->json(['message' => 'Updated successfully!'], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation failed, handle the exception
+            return response()->json(['errors' => $e->validator->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
     }
 
     function data(Request $request)
@@ -101,7 +114,7 @@ class SOPController extends Controller
 
         $job_functions = JobFunction::where('status', b'1')->get();
 
-        $categories = Category::where('status', b'1')->get();
+        $categories = Category::where('status', b'1')->where('type', 'Policy')->get();
 
         return response()->json([
             'departments' => $departments,

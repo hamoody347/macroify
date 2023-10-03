@@ -9,7 +9,11 @@ class JobFunction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'department_id', 'status'];
+    protected $fillable = [
+        'name',
+        'department_id',
+        'status'
+    ];
 
     public function department()
     {
@@ -24,5 +28,20 @@ class JobFunction extends Model
     public function sops()
     {
         return $this->belongsToMany(SOP::class);
+    }
+
+    public function faqs()
+    {
+        return $this->belongsToMany(FAQ::class);
+    }
+
+    public function wikis()
+    {
+        return $this->belongsToMany(Wiki::class);
+    }
+
+    public function policyBooks()
+    {
+        return $this->belongsToMany(PolicyBook::class);
     }
 }
