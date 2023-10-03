@@ -114,7 +114,7 @@ class SOPController extends Controller
 
         $job_functions = JobFunction::where('status', b'1')->get();
 
-        $categories = Category::where('status', b'1')->where('type', 'Policy')->get();
+        $categories = Category::where('status', b'1')->where('type', 'SOP')->get();
 
         return response()->json([
             'departments' => $departments,
