@@ -98,4 +98,17 @@ class TenantController extends Controller
             return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
     }
+
+    function delete($id)
+    {
+        try {
+            $tenant = Tenant::findOrFail($id);
+
+            $tenant->delete();
+
+            return response()->json(['message' => 'Tenant deleted successfully!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
+    }
 }

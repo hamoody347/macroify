@@ -76,4 +76,17 @@ class SuperUserController extends Controller
             return response()->json(['message' => 'Failed', 'error' => $e], 500);
         }
     }
+
+    function delete($id)
+    {
+        try {
+            $user = SuperUser::findOrFail($id);
+
+            $user->delete();
+
+            return response()->json(['message' => 'Deleted successfully!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed', 'error' => $e], 500);
+        }
+    }
 }
