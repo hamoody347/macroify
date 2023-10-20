@@ -56,6 +56,7 @@ class SOPController extends Controller
                 'created_by' => 'exists:users,id',
                 'edited_by' => 'exists:users,id',
                 'status' => 'boolean',
+                'general' => 'boolean',
             ]);
 
             $data['created_by'] = $request->user()->id;
@@ -89,6 +90,7 @@ class SOPController extends Controller
                 'created_by' => 'exists:users,id',
                 'edited_by' => 'exists:users,id',
                 'status' => 'boolean',
+                'general' => 'boolean',
             ]);
 
             $data['edited_by'] = $request->user()->id;

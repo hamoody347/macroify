@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 
 use App\Models\Tenant;
+use App\Models\TenantDetails;
 use App\Models\User;
 use Stancl\Tenancy\Database\Models\Domain;
 
@@ -16,7 +17,7 @@ class TenantController extends Controller
     function index()
     {
         try {
-            $tenants = Tenant::with(['domains'])->get();
+            $tenants = Tenant::with(['domains', 'details'])->get();
             return response()->json($tenants);
         } catch (\Exception $e) {
             return response()->json(['error' => $e, 'message' => 'Something Went Wrong'], 500);
@@ -27,7 +28,7 @@ class TenantController extends Controller
     {
         try {
             // Get tenant with it's domain.
-            $tenant = Tenant::with(['domains'])->findOrFail($id);
+            $tenant = Tenant::with(['domains', 'details'])->findOrFail($id);
 
             return response()->json($tenant);
         } catch (\Exception $e) {
@@ -40,23 +41,26 @@ class TenantController extends Controller
         try {
 
             $data = $request->validate([
+                'is_active' => 'boolean',
                 'name' => 'required|string',
-                'email' => 'required|email|unique:tenants',
-                // 'email' => 'required|email',
-                'domain' => 'required|unique:domains'
+                'domain' => 'required|unique:domains',
+                'email' => 'required|email|unique:tenant_details',
+                'password' => 'required|min:8'
             ]);
 
-            $tenant = Tenant::create(['name' => $request->name, 'email' => $request->email]);
+            $tenant = Tenant::create();
+
+            $tenant->details()->create($data);
 
             $tenant->domains()->create(['domain' => $request->domain]);
 
-            $requestCopy = $request;
+            $requestCopy = $data;
 
             $tenant->run(function () use ($requestCopy) {
                 User::create([
-                    'name' => $requestCopy->name,
-                    'email' => $requestCopy->email,
-                    'password' => Hash::make($requestCopy->password),
+                    'name' => $requestCopy['name'],
+                    'email' => $requestCopy['email'],
+                    'password' => Hash::make($requestCopy['password']),
                     'role' => 'admin',
                     'department' => null,
                 ]);
@@ -77,21 +81,26 @@ class TenantController extends Controller
     {
         try {
 
-            $tenant = Tenant::with(['domains'])->findOrFail($request->id);
+            $tenant = Tenant::findOrFail($request->id);
+            $domain = $tenant->domains()->first();
 
-            $request->validate([
-                'name' => 'string',
-                // 'email' => 'email|unique:tenants,email,' . $tenant->id,
-                // 'email' => 'email',
+            $request->merge(['name' => $request->input('details.name')]);
+
+            $data = $request->validate([
+                'is_active' => 'boolean',
+                'name' => 'required|string',
+                'domain' => 'required|unique:domains,domain,' . $domain->id,
+                'email' => 'email|unique:tenant_details,email,' . $tenant->id,
             ]);
 
-            $tenant->name = $request->name;
+            $domainData = ['domain' => $data['domain']];
+            $detailsData = array_diff_key($data, $domainData);
 
-            $tenant->save();
+            $tenant->details()->update($detailsData);
 
-            $tenant->domains()->first()->update(['domain' => $request->domain]);
+            $tenant->domains()->first()->update($domainData);
 
-            return response()->json(['message' => 'Tenant updated successfully!'], 200);
+            return response()->json(['message' => 'Tenant updated successfully!', 'data' => $tenant->name, 'tenant' => $tenant], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Validation failed, handle the exception
             return response()->json(['errors' => $e->validator->errors(), 'validator' => true], 422);

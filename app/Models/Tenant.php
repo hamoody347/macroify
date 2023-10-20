@@ -11,8 +11,20 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains;
 
-    protected $fillable = [
-        'email',
-        'name',
-    ];
+    function details()
+    {
+        return $this->hasOne(TenantDetails::class);
+    }
+    
+    // protected $fillable = [
+    //     'tenant_details_id'
+    // ];
+
+    // public static function getCustomColumns(): array
+    // {
+    //     return [
+    //         'id',
+    //         'tenant_details_id',
+    //     ];
+    // }
 }

@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuperUserController;
 use App\Http\Controllers\Tenant\TenantController;
 use App\Http\Controllers\Auth\LoginController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +20,9 @@ use App\Http\Controllers\Auth\LoginController;
 */
 
 // Auth Routes
+Route::get('/fallbacklogin', function () {
+    abort(401, 'Not Authenticated!');
+});
 Route::post('/login', [LoginController::class, 'login']);
 Route::middleware(['auth:sanctum'])->get('/logout', [LoginController::class, 'logout']);
 
@@ -26,6 +31,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    // Dashboard Routes
+    Route::get('/dashboard', [DashboardController::class, 'index']); // Get super admin dashboard
+
     // User Routes
     Route::get('/users', [SuperUserController::class, 'index']); // Get all users
     Route::get('/users/{id}', [SuperUserController::class, 'show']); // Get a single user

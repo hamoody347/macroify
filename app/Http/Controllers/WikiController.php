@@ -138,7 +138,7 @@ class WikiController extends Controller
 
         $job_functions = JobFunction::where('status', b'1')->get();
 
-        $categories = Category::where('status', b'1')->where('type', 'WIKI')->get();
+        $categories = Category::where('status', b'1')->where('type', 'WIKI')->with(['wikis'])->get();
 
         return response()->json([
             'departments' => $departments,

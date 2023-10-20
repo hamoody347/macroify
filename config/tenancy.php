@@ -18,6 +18,7 @@ return [
      */
     'central_domains' => [
         'localhost',
+        '127.0.0.1',
         'admin.localhost',
         'www.backend.macroify.com',
         'admin.backend.macroify.com',

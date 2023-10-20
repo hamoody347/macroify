@@ -25,17 +25,18 @@ class PolicyBookController extends Controller
             if ($user->role == 'user') {
                 $userId = $user->id;
 
-                $policyBooks = PolicyBook::where(function ($query) use ($userId) {
-                    // Retrieve PolicyBooks assigned to the user through job functions
-                    $query->whereHas('jobFunctions.users', function ($subQuery) use ($userId) {
-                        $subQuery->where('users.id', $userId);
-                    });
+                $policyBooks = PolicyBook::where('status', 'published')
+                    ->where(function ($query) use ($userId) {
+                        // Retrieve PolicyBooks assigned to the user through job functions
+                        $query->whereHas('jobFunctions.users', function ($subQuery) use ($userId) {
+                            $subQuery->where('users.id', $userId);
+                        });
 
-                    // Retrieve PolicyBooks assigned to the user through the PolicyAssignment table
-                    $query->orWhereHas('policyAssignments', function ($subQuery) use ($userId) {
-                        $subQuery->where('user_id', $userId);
-                    });
-                })
+                        // Retrieve PolicyBooks assigned to the user through the PolicyAssignment table
+                        $query->orWhereHas('policyAssignments', function ($subQuery) use ($userId) {
+                            $subQuery->where('user_id', $userId);
+                        });
+                    })
                     // Retrieve PolicyBooks marked as "general"
                     ->orWhere('general', true)
                     ->get();

@@ -33,7 +33,7 @@ class SuperUserController extends Controller
             $data = $request->validate([
                 'name' => 'required|string',
                 'email' => 'required|email|unique:users',
-                'password' => 'min:8',
+                'password' => 'required|min:8',
                 'role' => 'required|in:super-admin',
                 'status' => 'boolean',
             ]);
@@ -62,9 +62,12 @@ class SuperUserController extends Controller
             $data = $request->validate([
                 'name' => 'string',
                 'email' => 'email|unique:users,email,' . $user->id,
+                'password' => 'min:8'
             ]);
 
             $user->update($data);
+
+            $user->password = Hash::make($request->password);
 
             $user->save();
 
