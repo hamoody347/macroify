@@ -36,3 +36,8 @@ Run tenant migrations
 ```
 php artisan tenant:migrate --seed
 ```
+
+Run server
+```
+php artisan serve
+```
