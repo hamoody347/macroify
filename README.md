@@ -1,10 +1,11 @@
 ## About Macroify
 
-Macroify is a multi-tenant Employee Management, Training & Onboarding System.
+Macroify is a sub-domain based multi-tenant Employee Management, Training & Onboarding System.
 
 ### Super Admin
 - Create tenants.
 - Auto create databases when creating new tenants.
+- Assign sub-domains for tenants.
 - Create super-users.
   
 ### Tenant
